@@ -2,6 +2,7 @@ import { MikroORM } from '@mikro-orm/core';
 import path from 'path';
 import { __prod__ } from './constants';
 import { Post } from './entities/Post';
+import { User } from './entities/User';
 
 export default {
   migrations: {
@@ -10,7 +11,7 @@ export default {
   },
   name: 'postgres',
   password: '@piyuspandey021',
-  entities: [Post],
+  entities: [Post, User],
   dbName: 'redist',
   type: 'postgresql',
   debug: !__prod__,
