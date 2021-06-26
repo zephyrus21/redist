@@ -5,6 +5,7 @@ import {
   InputType,
   Mutation,
   ObjectType,
+  Query,
   Resolver,
 } from 'type-graphql';
 import argon2 from 'argon2';
@@ -39,6 +40,16 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
+  @Query(() => User, { nullable: true })
+  async me(@Ctx() ctx: MyContext) {
+    if (!ctx.req.session.userId) {
+      return null;
+    }
+
+    const user = await ctx.em.findOne(User, { id: ctx.req.session.userId });
+    return user;
+  }
+
   @Mutation(() => UserResponse)
   async register(
     @Arg('options') options: UsernamePasswordInput,
@@ -55,12 +66,40 @@ export class UserResolver {
       };
     }
 
+    if (options.password.length <= 4) {
+      return {
+        errors: [
+          {
+            field: 'password',
+            message: 'password must have more than 4 characters',
+          },
+        ],
+      };
+    }
+
     const hashedPassword = await argon2.hash(options.password);
     const user = ctx.em.create(User, {
       username: options.username,
       password: hashedPassword,
     });
-    await ctx.em.persistAndFlush(user);
+
+    try {
+      await ctx.em.persistAndFlush(user);
+    } catch (err) {
+      if (err.code === '23505') {
+        return {
+          errors: [
+            {
+              field: 'username',
+              message: 'username alredy exist',
+            },
+          ],
+        };
+      }
+    }
+
+    ctx.req.session.userId = user.id;
+
     return { user };
   }
 
@@ -94,6 +133,8 @@ export class UserResolver {
         ],
       };
     }
+
+    ctx.req.session.userId = user.id;
 
     return {
       user,
