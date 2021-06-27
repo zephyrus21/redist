@@ -11,6 +11,7 @@ interface InputFieldProps {
   label: string;
   placeholder: string;
   name: string;
+  type?: string;
 }
 
 const InputField: React.FC<InputFieldProps> = (props) => {

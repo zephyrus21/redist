@@ -9,7 +9,7 @@ import { toErrorMap } from '../utils/toErrorMap';
 
 interface registerProps {}
 
-const Register: React.FC<registerProps> = () => {
+const Login: React.FC<registerProps> = () => {
   const router = useRouter();
   const [_, register] = useRegisterMutation();
 
@@ -54,4 +54,4 @@ const Register: React.FC<registerProps> = () => {
   );
 };
 
-export default Register;
+export default Login;
