@@ -14,9 +14,11 @@ import { MyContext } from '../types';
 import { COOKIE_NAME } from '../constants';
 
 @InputType()
-class UsernamePasswordInput {
+class {
   @Field()
   username: string;
+  @Field()
+  email: string;
   @Field()
   password: string;
 }
@@ -41,6 +43,12 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
+  @Mutation(() => Boolean)
+  async forgotPassword(@Arg('email') email: string, @Ctx() ctx: MyContext) {
+    const user = await ctx.em.findOne(User, { email });
+    return user;
+  }
+
   @Query(() => User, { nullable: true })
   async me(@Ctx() ctx: MyContext) {
     if (!ctx.req.session.userId) {
