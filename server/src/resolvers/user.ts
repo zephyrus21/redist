@@ -14,7 +14,7 @@ import { MyContext } from '../types';
 import { COOKIE_NAME } from '../constants';
 
 @InputType()
-class {
+class UsernamePasswordInput {
   @Field()
   username: string;
   @Field()
