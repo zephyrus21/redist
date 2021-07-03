@@ -13,7 +13,7 @@ import { MyContext } from '../types';
 import { COOKIE_NAME } from '../constants';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { UsernamePasswordInput } from '../utils/UsernamePasswordInput';
-import { validateRegister } from 'src/utils/validateRegister';
+import { validateRegister } from '../utils/validateRegister';
 
 @ObjectType()
 class FieldError {
