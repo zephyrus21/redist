@@ -26,6 +26,7 @@ export type Mutation = {
   updatePost?: Maybe<Post>;
   deletePost: Scalars['Boolean'];
   forgotPassword: Scalars['Boolean'];
+  changePassword: UserResponse;
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
@@ -50,6 +51,12 @@ export type MutationDeletePostArgs = {
 
 export type MutationForgotPasswordArgs = {
   email: Scalars['String'];
+};
+
+
+export type MutationChangePasswordArgs = {
+  newPassword: Scalars['String'];
+  token: Scalars['String'];
 };
 
 
@@ -104,9 +111,39 @@ export type UsernamePasswordInput = {
   password: Scalars['String'];
 };
 
+export type ErrorFragFragment = (
+  { __typename?: 'FieldError' }
+  & Pick<FieldError, 'field' | 'message'>
+);
+
 export type UserFragFragment = (
   { __typename?: 'User' }
   & Pick<User, 'id' | 'username'>
+);
+
+export type UserResponseFragFragment = (
+  { __typename?: 'UserResponse' }
+  & { errors?: Maybe<Array<(
+    { __typename?: 'FieldError' }
+    & ErrorFragFragment
+  )>>, user?: Maybe<(
+    { __typename?: 'User' }
+    & UserFragFragment
+  )> }
+);
+
+export type ChangePasswordMutationVariables = Exact<{
+  token: Scalars['String'];
+  newPassword: Scalars['String'];
+}>;
+
+
+export type ChangePasswordMutation = (
+  { __typename?: 'Mutation' }
+  & { changePassword: (
+    { __typename?: 'UserResponse' }
+    & UserResponseFragFragment
+  ) }
 );
 
 export type LoginMutationVariables = Exact<{
@@ -119,13 +156,7 @@ export type LoginMutation = (
   { __typename?: 'Mutation' }
   & { login: (
     { __typename?: 'UserResponse' }
-    & { errors?: Maybe<Array<(
-      { __typename?: 'FieldError' }
-      & Pick<FieldError, 'field' | 'message'>
-    )>>, user?: Maybe<(
-      { __typename?: 'User' }
-      & UserFragFragment
-    )> }
+    & UserResponseFragFragment
   ) }
 );
 
@@ -146,13 +177,7 @@ export type RegisterMutation = (
   { __typename?: 'Mutation' }
   & { register: (
     { __typename?: 'UserResponse' }
-    & { errors?: Maybe<Array<(
-      { __typename?: 'FieldError' }
-      & Pick<FieldError, 'field' | 'message'>
-    )>>, user?: Maybe<(
-      { __typename?: 'User' }
-      & UserFragFragment
-    )> }
+    & UserResponseFragFragment
   ) }
 );
 
@@ -178,25 +203,47 @@ export type PostQuery = (
   )> }
 );
 
+export const ErrorFragFragmentDoc = gql`
+    fragment ErrorFrag on FieldError {
+  field
+  message
+}
+    `;
 export const UserFragFragmentDoc = gql`
     fragment UserFrag on User {
   id
   username
 }
     `;
+export const UserResponseFragFragmentDoc = gql`
+    fragment UserResponseFrag on UserResponse {
+  errors {
+    ...ErrorFrag
+  }
+  user {
+    ...UserFrag
+  }
+}
+    ${ErrorFragFragmentDoc}
+${UserFragFragmentDoc}`;
+export const ChangePasswordDocument = gql`
+    mutation ChangePassword($token: String!, $newPassword: String!) {
+  changePassword(token: $token, newPassword: $newPassword) {
+    ...UserResponseFrag
+  }
+}
+    ${UserResponseFragFragmentDoc}`;
+
+export function useChangePasswordMutation() {
+  return Urql.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument);
+};
 export const LoginDocument = gql`
     mutation Login($usernameOrEmail: String!, $password: String!) {
   login(usernameOrEmail: $usernameOrEmail, password: $password) {
-    errors {
-      field
-      message
-    }
-    user {
-      ...UserFrag
-    }
+    ...UserResponseFrag
   }
 }
-    ${UserFragFragmentDoc}`;
+    ${UserResponseFragFragmentDoc}`;
 
 export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
@@ -213,16 +260,10 @@ export function useLogoutMutation() {
 export const RegisterDocument = gql`
     mutation Register($options: UsernamePasswordInput!) {
   register(options: $options) {
-    errors {
-      field
-      message
-    }
-    user {
-      ...UserFrag
-    }
+    ...UserResponseFrag
   }
 }
-    ${UserFragFragmentDoc}`;
+    ${UserResponseFragFragmentDoc}`;
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
