@@ -91,7 +91,6 @@ export class UserResolver {
       };
     }
 
-    const userIdNum = parseInt(userId);
     const user = await ctx.em.findOne(User, { id: parseInt(userId) });
 
     if (!user) {
@@ -107,6 +106,8 @@ export class UserResolver {
 
     user.password = await argon2.hash(newPassword);
     await ctx.em.persistAndFlush(user);
+
+    ctx.redis.del(key);
 
     ctx.req.session.userId = user.id;
 
