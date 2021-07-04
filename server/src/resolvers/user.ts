@@ -10,10 +10,12 @@ import {
 import argon2 from 'argon2';
 import { User } from '../entities/User';
 import { MyContext } from '../types';
-import { COOKIE_NAME } from '../constants';
+import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from '../constants';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { UsernamePasswordInput } from '../utils/UsernamePasswordInput';
 import { validateRegister } from '../utils/validateRegister';
+import { sendEmail } from '../utils/sendEmail';
+import { v4 } from 'uuid';
 
 @ObjectType()
 class FieldError {
@@ -38,7 +40,25 @@ export class UserResolver {
   @Mutation(() => Boolean)
   async forgotPassword(@Arg('email') email: string, @Ctx() ctx: MyContext) {
     const user = await ctx.em.findOne(User, { email });
-    return user;
+    if (!user) {
+      return true;
+    }
+
+    const token = v4();
+
+    await ctx.redis.set(
+      FORGET_PASSWORD_PREFIX + token,
+      user.id,
+      'ex',
+      1000 * 60 * 60 * 24 * 3
+    );
+
+    await sendEmail(
+      email,
+      `<a href="http://localhost:3000/change-password/${token}">reset password</a>`
+    );
+
+    return true;
   }
 
   @Query(() => User, { nullable: true })
@@ -111,8 +131,8 @@ export class UserResolver {
       return {
         errors: [
           {
-            field: 'username',
-            message: "username doesn't exist",
+            field: 'usernameOrEmail',
+            message: "username or email doesn't exist",
           },
         ],
       };

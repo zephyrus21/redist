@@ -32,7 +32,7 @@ const Login: React.FC<registerProps> = () => {
             <InputField
               name='usernameOrEmail'
               placeholder='Username Or Email'
-              label='Username Or '
+              label='Username Or Email'
             />
             <Box mt={4}>
               <InputField
