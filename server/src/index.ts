@@ -17,15 +17,13 @@ import { Post } from './entities/Post';
 const main = async () => {
   const conn = await createConnection({
     type: 'postgres',
-    database: 'redist',
+    database: 'redist2',
     username: 'postgres',
-    password: 'postgres',
+    password: '@piyuspandey021',
     logging: true,
     synchronize: true,
     entities: [Post, User],
   });
-
-  await orm.getMigrator().up();
 
   const app = express();
 
