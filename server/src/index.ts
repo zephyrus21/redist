@@ -16,7 +16,8 @@ import { Post } from './entities/Post';
 import path from 'path';
 
 const main = async () => {
-  const conn = await createConnection({
+  // const conn =
+  await createConnection({
     type: 'postgres',
     database: 'redist2',
     username: 'postgres',
