@@ -8,7 +8,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 
-import { Field, Int, ObjectType } from 'type-graphql';
+import { Field, ObjectType } from 'type-graphql';
 import { User } from './User';
 
 @ObjectType()
