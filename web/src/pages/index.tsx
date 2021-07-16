@@ -71,4 +71,4 @@ const Index = () => {
 
 export default withUrqlClient(createUrqlClient, { ssr: true })(Index);
 
-//!: 7:12
+//!: 8:00

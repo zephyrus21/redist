@@ -50,14 +50,5 @@ export class Post extends BaseEntity {
   updatedAt: Date;
 }
 
-// import { User } from './User';
-// import { Updoot } from './Updoot';
-
-// @ObjectType()
-// @Entity()
-// export class Post extends BaseEntity {
-
 //   @OneToMany(() => Updoot, (updoot) => updoot.post)
 //   updoots: Updoot[];
-
-// }
