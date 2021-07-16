@@ -12,13 +12,15 @@ import { withUrqlClient } from 'next-urql';
 import Layout from '../components/Layout';
 import { usePostsQuery } from '../generated/graphql';
 import { createUrqlClient } from '../utils/createUrqlClient';
+import { useState } from 'react';
 
 const Index = () => {
+  const [variables, setVariables] = useState({
+    limit: 10,
+    cursor: null as null | string,
+  });
   const [{ data, fetching }] = usePostsQuery({
-    variables: {
-      limit: 10,
-      cursor: '',
-    },
+    variables,
   });
 
   if (!fetching && !data) {
@@ -38,7 +40,7 @@ const Index = () => {
         <div>Loading...</div>
       ) : (
         <Stack>
-          {data!.posts.map((p) => (
+          {data!.posts.posts.map((p) => (
             <Box key={p.id} p={5} shadow='md' borderWidth='1'>
               <Heading fontSize='xl'>{p.title}</Heading>
               <Text>{p.textSnippet}</Text>
@@ -46,9 +48,19 @@ const Index = () => {
           ))}
         </Stack>
       )}
-      {data ? (
+      {data && data.posts.hasMore ? (
         <Flex>
-          <Button colorScheme='teal' isLoading={fetching} m='auto' my='8'>
+          <Button
+            onClick={() => {
+              setVariables({
+                limit: variables.limit,
+                cursor: data.posts.posts[data.posts.posts.length - 1].createdAt,
+              });
+            }}
+            colorScheme='teal'
+            isLoading={fetching}
+            m='auto'
+            my='8'>
             Load More
           </Button>
         </Flex>
@@ -58,3 +70,5 @@ const Index = () => {
 };
 
 export default withUrqlClient(createUrqlClient, { ssr: true })(Index);
+
+//!: 7:12
