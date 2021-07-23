@@ -6,10 +6,12 @@ import {
   UpdateDateColumn,
   BaseEntity,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 
 import { Field, ObjectType } from 'type-graphql';
 import { User } from './User';
+import { Updoot } from './Updoot';
 
 @ObjectType()
 @Entity()
@@ -33,6 +35,9 @@ export class Post extends BaseEntity {
   // @Field(() => Int, { nullable: true })
   // voteStatus: number | null; // 1 or -1 or null
 
+  @OneToMany(() => Updoot, (updoot) => updoot.post)
+  updoots: Updoot[];
+
   @Field()
   @Column()
   creatorId: number;
@@ -49,6 +54,3 @@ export class Post extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 }
-
-//   @OneToMany(() => Updoot, (updoot) => updoot.post)
-//   updoots: Updoot[];
