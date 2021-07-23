@@ -13,6 +13,7 @@ const Updoot: React.FC<UpdootProps> = ({ post }) => {
   return (
     <Flex direction='column' align='center' pr={4}>
       <IconButton
+        borderRadius='6'
         colorScheme={post.voteStatus === 1 ? 'green' : undefined}
         aria-label='Up Vote'
         icon={<ChevronUpIcon />}
@@ -28,6 +29,7 @@ const Updoot: React.FC<UpdootProps> = ({ post }) => {
       />
       {post.points}
       <IconButton
+        borderRadius='6'
         colorScheme={post.voteStatus === -1 ? 'red' : undefined}
         aria-label='Down Vote'
         icon={<ChevronDownIcon />}

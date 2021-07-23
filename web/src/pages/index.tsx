@@ -3,8 +3,6 @@ import {
   Button,
   Flex,
   Heading,
-  Icon,
-  IconButton,
   Link,
   Stack,
   Text,
@@ -47,7 +45,11 @@ const Index = () => {
             <Flex key={p.id} p={5} shadow='md' borderWidth='1' align='center'>
               <Updoot post={p} />
               <Box>
-                <Heading fontSize='xl'>{p.title}</Heading>
+                <NextLink href={`/post/${p.id}`}>
+                  <Link>
+                    <Heading fontSize='xl'>{p.title}</Heading>
+                  </Link>
+                </NextLink>
                 post by {p.creator.username}
                 <Text>{p.textSnippet}</Text>
               </Box>
