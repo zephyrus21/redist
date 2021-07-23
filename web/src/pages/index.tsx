@@ -15,7 +15,7 @@ import Layout from '../components/Layout';
 import { usePostsQuery } from '../generated/graphql';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import { useState } from 'react';
-import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
+import Updoot from '../components/Updoot';
 
 const Index = () => {
   const [variables, setVariables] = useState({
@@ -44,12 +44,8 @@ const Index = () => {
       ) : (
         <Stack>
           {data!.posts.posts.map((p) => (
-            <Flex key={p.id} p={5} shadow='md' borderWidth='1'>
-              <Flex direction='column' align='center' pr={4}>
-                <IconButton aria-label='Up Vote' icon={<ChevronUpIcon />} />
-                {p.points}
-                <IconButton aria-label='Down Vote' icon={<ChevronDownIcon />} />
-              </Flex>
+            <Flex key={p.id} p={5} shadow='md' borderWidth='1' align='center'>
+              <Updoot post={p} />
               <Box>
                 <Heading fontSize='xl'>{p.title}</Heading>
                 post by {p.creator.username}
