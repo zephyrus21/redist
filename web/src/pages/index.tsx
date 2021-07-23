@@ -3,6 +3,8 @@ import {
   Button,
   Flex,
   Heading,
+  Icon,
+  IconButton,
   Link,
   Stack,
   Text,
@@ -13,10 +15,11 @@ import Layout from '../components/Layout';
 import { usePostsQuery } from '../generated/graphql';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import { useState } from 'react';
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 
 const Index = () => {
   const [variables, setVariables] = useState({
-    limit: 10,
+    limit: 15,
     cursor: null as null | string,
   });
   const [{ data, fetching }] = usePostsQuery({
@@ -41,10 +44,18 @@ const Index = () => {
       ) : (
         <Stack>
           {data!.posts.posts.map((p) => (
-            <Box key={p.id} p={5} shadow='md' borderWidth='1'>
-              <Heading fontSize='xl'>{p.title}</Heading>
-              <Text>{p.textSnippet}</Text>
-            </Box>
+            <Flex key={p.id} p={5} shadow='md' borderWidth='1'>
+              <Flex direction='column' align='center' pr={4}>
+                <IconButton aria-label='Up Vote' icon={<ChevronUpIcon />} />
+                {p.points}
+                <IconButton aria-label='Down Vote' icon={<ChevronDownIcon />} />
+              </Flex>
+              <Box>
+                <Heading fontSize='xl'>{p.title}</Heading>
+                post by {p.creator.username}
+                <Text>{p.textSnippet}</Text>
+              </Box>
+            </Flex>
           ))}
         </Stack>
       )}
@@ -70,5 +81,3 @@ const Index = () => {
 };
 
 export default withUrqlClient(createUrqlClient, { ssr: true })(Index);
-
-//!: 8:00
