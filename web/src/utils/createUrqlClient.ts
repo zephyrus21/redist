@@ -93,7 +93,7 @@ export const createUrqlClient = (ssrExchange: any) => ({
                 fragment _ on Post {
                   id
                   points
-                  # voteStatus
+                  voteStatus
                 }
               `,
               { id: postId } as any
@@ -109,10 +109,10 @@ export const createUrqlClient = (ssrExchange: any) => ({
                 gql`
                   fragment __ on Post {
                     points
-                    # voteStatus
+                    voteStatus
                   }
                 `,
-                { id: postId, points: newPoints } as any
+                { id: postId, points: newPoints, voteStatus: value } as any
               );
             }
           },

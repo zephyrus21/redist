@@ -13,10 +13,13 @@ const Updoot: React.FC<UpdootProps> = ({ post }) => {
   return (
     <Flex direction='column' align='center' pr={4}>
       <IconButton
-        colorScheme='green'
+        colorScheme={post.voteStatus === 1 ? 'green' : undefined}
         aria-label='Up Vote'
         icon={<ChevronUpIcon />}
         onClick={() => {
+          if (post.voteStatus === 1) {
+            return;
+          }
           vote({
             postId: post.id,
             value: 1,
@@ -25,10 +28,13 @@ const Updoot: React.FC<UpdootProps> = ({ post }) => {
       />
       {post.points}
       <IconButton
-        colorScheme='red'
+        colorScheme={post.voteStatus === -1 ? 'red' : undefined}
         aria-label='Down Vote'
         icon={<ChevronDownIcon />}
         onClick={() => {
+          if (post.voteStatus === -1) {
+            return;
+          }
           vote({
             postId: post.id,
             value: -1,
