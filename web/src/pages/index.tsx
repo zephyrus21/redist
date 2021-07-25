@@ -30,13 +30,6 @@ const Index = () => {
 
   return (
     <Layout>
-      <Flex align='center'>
-        <Heading>Redist</Heading>
-        <NextLink href='/create-post'>
-          <Link ml='auto'>Create Post</Link>
-        </NextLink>
-      </Flex>
-      <br />
       {!data && fetching ? (
         <div>Loading...</div>
       ) : (
@@ -79,3 +72,5 @@ const Index = () => {
 };
 
 export default withUrqlClient(createUrqlClient, { ssr: true })(Index);
+
+//!: 10:20
