@@ -3,6 +3,7 @@ import {
   Button,
   Flex,
   Heading,
+  IconButton,
   Link,
   Stack,
   Text,
@@ -10,10 +11,11 @@ import {
 import NextLink from 'next/link';
 import { withUrqlClient } from 'next-urql';
 import Layout from '../components/Layout';
-import { usePostsQuery } from '../generated/graphql';
+import { useDeletePostMutation, usePostsQuery } from '../generated/graphql';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import { useState } from 'react';
 import Updoot from '../components/Updoot';
+import { DeleteIcon } from '@chakra-ui/icons';
 
 const Index = () => {
   const [variables, setVariables] = useState({
@@ -23,6 +25,7 @@ const Index = () => {
   const [{ data, fetching }] = usePostsQuery({
     variables,
   });
+  const [, deletePost] = useDeletePostMutation();
 
   if (!fetching && !data) {
     return <div>query failed!</div>;
@@ -34,20 +37,31 @@ const Index = () => {
         <div>Loading...</div>
       ) : (
         <Stack>
-          {data!.posts.posts.map((p) => (
-            <Flex key={p.id} p={5} shadow='md' borderWidth='1' align='center'>
-              <Updoot post={p} />
-              <Box>
-                <NextLink href={`/post/${p.id}`}>
-                  <Link>
-                    <Heading fontSize='xl'>{p.title}</Heading>
-                  </Link>
-                </NextLink>
-                post by {p.creator.username}
-                <Text>{p.textSnippet}</Text>
-              </Box>
-            </Flex>
-          ))}
+          {data!.posts.posts.map((p) =>
+            !p ? null : (
+              <Flex key={p.id} p={5} shadow='md' borderWidth='1' align='center'>
+                <Updoot post={p} />
+                <Box flex={1}>
+                  <NextLink href={`/post/${p.id}`}>
+                    <Link>
+                      <Heading fontSize='xl'>{p.title}</Heading>
+                    </Link>
+                  </NextLink>
+                  post by {p.creator.username}
+                  <Text>{p.textSnippet}</Text>
+                </Box>
+                <IconButton
+                  color='red'
+                  borderRadius='6'
+                  aria-label='Delete Button'
+                  icon={<DeleteIcon />}
+                  onClick={() => {
+                    deletePost({ id: p.id });
+                  }}
+                />
+              </Flex>
+            )
+          )}
         </Stack>
       )}
       {data && data.posts.hasMore ? (
