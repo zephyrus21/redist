@@ -2,6 +2,7 @@ import { Box, Heading, Text } from '@chakra-ui/react';
 import { withUrqlClient } from 'next-urql';
 import { useRouter } from 'next/router';
 import React from 'react';
+import EditDeletePost from '../../components/EditDeletePost';
 import Layout from '../../components/Layout';
 import { usePostQuery } from '../../generated/graphql';
 import { createUrqlClient } from '../../utils/createUrqlClient';
@@ -35,6 +36,7 @@ const Post: React.FC<PostProps> = ({}) => {
     <Layout>
       <Heading mb={4}>{data?.post?.title}</Heading>
       <Text>{data?.post?.text}</Text>
+      <EditDeletePost id={data.post.id} creatorId={data.post.creator.id} />
     </Layout>
   );
 };

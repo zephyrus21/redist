@@ -3,7 +3,6 @@ import {
   Button,
   Flex,
   Heading,
-  IconButton,
   Link,
   Stack,
   Text,
@@ -11,26 +10,20 @@ import {
 import NextLink from 'next/link';
 import { withUrqlClient } from 'next-urql';
 import Layout from '../components/Layout';
-import {
-  useDeletePostMutation,
-  useMeQuery,
-  usePostsQuery,
-} from '../generated/graphql';
+import { useMeQuery, usePostsQuery } from '../generated/graphql';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import React, { useState } from 'react';
 import Updoot from '../components/Updoot';
-import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import EditDeletePost from '../components/EditDeletePost';
 
 const Index = () => {
   const [variables, setVariables] = useState({
     limit: 15,
     cursor: null as null | string,
   });
-  const [{ data: meData }] = useMeQuery();
   const [{ data, fetching }] = usePostsQuery({
     variables,
   });
-  const [, deletePost] = useDeletePostMutation();
 
   if (!fetching && !data) {
     return <div>query failed!</div>;
@@ -55,27 +48,9 @@ const Index = () => {
                   post by {p.creator.username}
                   <Text>{p.textSnippet}</Text>
                 </Box>
-                {meData?.me?.id === p.creator.id ? (
-                  <Box ml='14'>
-                    <NextLink href={`/post/edit/${p.id}`}>
-                      <IconButton
-                        color='green'
-                        borderRadius='6'
-                        aria-label='Delete Button'
-                        icon={<EditIcon />}
-                      />
-                    </NextLink>
-                    <IconButton
-                      color='red'
-                      borderRadius='6'
-                      aria-label='Delete Button'
-                      icon={<DeleteIcon />}
-                      onClick={() => {
-                        deletePost({ id: p.id });
-                      }}
-                    />
-                  </Box>
-                ) : null}
+                <Box ml='14'>
+                  <EditDeletePost id={p.id} creatorId={p.creator.id} />
+                </Box>
               </Flex>
             )
           )}
