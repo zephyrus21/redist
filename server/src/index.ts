@@ -19,6 +19,7 @@ import { createUserLoader } from './utils/createUserLoader';
 import { createUpdootLoader } from './utils/createUpdootLoader';
 
 const main = async () => {
+  //! Connecting TypeORM to our DB
   // const conn =
   await createConnection({
     type: 'postgres',
@@ -34,7 +35,6 @@ const main = async () => {
   // await conn.runMigrations();
 
   const app = express();
-
   const RedisStore = connectRedis(session);
   const redis = new Redis();
 
@@ -45,6 +45,7 @@ const main = async () => {
     })
   );
 
+  //? use of Redis in cookies
   app.use(
     session({
       name: COOKIE_NAME,
@@ -62,6 +63,7 @@ const main = async () => {
     })
   );
 
+  //! Apollo server for GraphQl
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       resolvers: [PostResolver, UserResolver],
@@ -83,11 +85,10 @@ const main = async () => {
   app.get('/', (_, res) => {
     res.send('Hello Bitch');
   });
+
   app.listen(port, () => {
     console.log(`http://localhost:${port}`);
   });
 };
 
 main();
-
-//!: 6:40
